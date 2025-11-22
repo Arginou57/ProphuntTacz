@@ -60,6 +60,9 @@ public class PropHuntGame {
     private static final int PROP_DECOY_INTERVAL = 1200; // 1 minute (60 seconds * 20 ticks)
     private static final String PROP_DECOY_ITEM_TAG = "prophunt_prop_decoy";
 
+    // Saved player inventories - restored when game ends or player leaves
+    private final Map<UUID, List<ItemStack>> savedInventories = new HashMap<>();
+
     private final Random random = new Random();
 
     public PropHuntGame() {
@@ -71,10 +74,15 @@ public class PropHuntGame {
         if (state != GameState.LOBBY) {
             return false;
         }
+
+        // Save player inventory before joining
+        savePlayerInventory(player);
+
         players.put(player.getUUID(), player);
 
         int secondsLeft = (lobbyTime - gameTimer) / 20;
         player.sendSystemMessage(Component.literal("§aYou joined the Prop Hunt game!"));
+        player.sendSystemMessage(Component.literal("§7Your inventory has been saved and will be restored after the game."));
         player.sendSystemMessage(Component.literal("§e" + secondsLeft + " seconds until the game starts..."));
 
         // Teleport to lobby spawn if map is set
@@ -105,8 +113,8 @@ public class PropHuntGame {
             transformation.revert();
         }
 
-        // Clear entire inventory and remove all effects
-        player.getInventory().clearContent();
+        // Restore player's original inventory and remove all effects
+        restorePlayerInventory(player);
         player.removeAllEffects();
 
         // Disable HUD for this player
@@ -846,10 +854,10 @@ public class PropHuntGame {
             propTransformations.remove(playerUUID);
         }
 
-        // Remove all effects, clear inventory and disable HUD for players
+        // Restore inventories, remove effects and disable HUD for players
         for (ServerPlayer player : players.values()) {
             player.removeAllEffects();
-            player.getInventory().clearContent();
+            restorePlayerInventory(player);
             try {
                 PacketDistributor.sendToPlayer(player, new HudSyncPayload(0, false, "FINISHED"));
             } catch (Exception e) {
@@ -862,9 +870,10 @@ public class PropHuntGame {
             FrozenPropBlockManager.clear(level);
         }
 
-        // Clear players and teams
+        // Clear players, teams and saved inventories
         players.clear();
         playerTeams.clear();
+        savedInventories.clear();
 
         state = GameState.FINISHED;
         System.out.println("[PropHunt] Game finished and cleaned up");
@@ -891,10 +900,10 @@ public class PropHuntGame {
             propTransformations.remove(playerUUID);
         }
 
-        // Remove all effects, clear inventory and disable HUD for players
+        // Restore inventories, remove effects and disable HUD for players
         for (ServerPlayer player : players.values()) {
             player.removeAllEffects();
-            player.getInventory().clearContent();
+            restorePlayerInventory(player);
             try {
                 PacketDistributor.sendToPlayer(player, new HudSyncPayload(0, false, "STOPPED"));
             } catch (Exception e) {
@@ -909,7 +918,37 @@ public class PropHuntGame {
 
         players.clear();
         playerTeams.clear();
+        savedInventories.clear();
         state = GameState.LOBBY;
+    }
+
+    /**
+     * Save a player's inventory before the game
+     */
+    private void savePlayerInventory(ServerPlayer player) {
+        List<ItemStack> inventory = new ArrayList<>();
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            inventory.add(stack.copy()); // Copy to avoid reference issues
+        }
+        savedInventories.put(player.getUUID(), inventory);
+        System.out.println("[PropHunt] Saved inventory for " + player.getName().getString() + " (" + inventory.size() + " slots)");
+    }
+
+    /**
+     * Restore a player's inventory after the game
+     */
+    private void restorePlayerInventory(ServerPlayer player) {
+        List<ItemStack> savedInventory = savedInventories.get(player.getUUID());
+        if (savedInventory != null) {
+            player.getInventory().clearContent();
+            for (int i = 0; i < savedInventory.size() && i < player.getInventory().getContainerSize(); i++) {
+                player.getInventory().setItem(i, savedInventory.get(i).copy());
+            }
+            savedInventories.remove(player.getUUID());
+            player.sendSystemMessage(Component.literal("§aYour inventory has been restored!"));
+            System.out.println("[PropHunt] Restored inventory for " + player.getName().getString());
+        }
     }
 
     /**
