@@ -99,6 +99,10 @@ public class PropHuntCommands {
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.argument("mapname", StringArgumentType.string())
                     .executes(PropHuntCommands::clearBlockList)))
+            .then(Commands.literal("mapremove")
+                .requires(source -> source.hasPermission(2))
+                .then(Commands.argument("mapname", StringArgumentType.string())
+                    .executes(PropHuntCommands::removeMap)))
         );
     }
 
@@ -806,5 +810,22 @@ public class PropHuntCommands {
         context.getSource().sendSuccess(() -> Component.literal(
             "§a" + count + " blocks cleared from map §e" + mapName), true);
         return 1;
+    }
+
+    private static int removeMap(CommandContext<CommandSourceStack> context) {
+        String mapName = StringArgumentType.getString(context, "mapname");
+
+        if (!MapManager.mapExists(mapName)) {
+            context.getSource().sendFailure(Component.literal("§cMap not found: " + mapName));
+            return 0;
+        }
+
+        if (MapManager.deleteMap(mapName)) {
+            context.getSource().sendSuccess(() -> Component.literal("§aMap §e" + mapName + " §ahas been deleted!"), true);
+            return 1;
+        } else {
+            context.getSource().sendFailure(Component.literal("§cFailed to delete map: " + mapName));
+            return 0;
+        }
     }
 }

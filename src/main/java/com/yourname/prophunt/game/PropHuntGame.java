@@ -687,29 +687,35 @@ public class PropHuntGame {
         // Pick a random prop (can be any prop including user)
         ServerPlayer targetProp = livingProps.get(random.nextInt(livingProps.size()));
 
-        // Play fart sound at the target prop's location
+        // Play fart sound at the target prop's location for ALL players
         if (targetProp.level() instanceof ServerLevel serverLevel) {
-            Vec3 pos = targetProp.position();
+            Vec3 propPos = targetProp.position();
 
-            serverLevel.playSound(
-                null,
-                pos.x, pos.y, pos.z,
-                ModSounds.PROP_DECOY_FART.get(),
-                SoundSource.PLAYERS,
-                2.0f, 1.0f
-            );
+            // Send sound to all players in the game at the PROP's position
+            for (ServerPlayer gamePlayer : players.values()) {
+                if (gamePlayer != null && gamePlayer.isAlive()) {
+                    gamePlayer.connection.send(new net.minecraft.network.protocol.game.ClientboundSoundPacket(
+                        net.minecraft.core.Holder.direct(ModSounds.PROP_DECOY_FART.get()),
+                        SoundSource.PLAYERS,
+                        propPos.x, propPos.y, propPos.z,
+                        4.0f, // Loud volume
+                        1.0f, // Normal pitch
+                        serverLevel.getRandom().nextLong()
+                    ));
+                }
+            }
 
             // Send particles
             serverLevel.sendParticles(
                 ParticleTypes.CLOUD,
-                pos.x, pos.y + 1.0, pos.z,
+                propPos.x, propPos.y + 1.0, propPos.z,
                 8,
                 0.3, 0.2, 0.3,
                 0.02
             );
 
             user.sendSystemMessage(Component.literal("§aDecoy used! A sound was played..."));
-            System.out.println("[PropHunt] Prop " + user.getName().getString() + " used Decoy on " + targetProp.getName().getString());
+            System.out.println("[PropHunt] Prop " + user.getName().getString() + " used Decoy on " + targetProp.getName().getString() + " at (" + propPos.x + ", " + propPos.y + ", " + propPos.z + ")");
         }
     }
 
