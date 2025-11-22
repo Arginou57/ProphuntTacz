@@ -1,0 +1,8 @@
+{
+  "pack": {
+    "description": "Prop Hunt Mod Resources",
+    "pack_format": 34,
+    "forge:resource_pack_format": 34,
+    "forge:data_pack_format": 34
+  }
+}

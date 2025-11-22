@@ -1,0 +1,92 @@
+{
+  "prop_whistle": {
+    "subtitle": "Prop makes noise",
+    "sounds": [
+      {
+        "name": "prophunt:prop_whistle",
+        "stream": false
+      }
+    ]
+  },
+  "prop_death": {
+    "subtitle": "Prop eliminated",
+    "sounds": [
+      {
+        "name": "prophunt:prop_death",
+        "stream": false
+      }
+    ]
+  },
+  "hunter_help_rickroll": {
+    "subtitle": "Hunter help activated",
+    "sounds": [
+      {
+        "name": "prophunt:hunter_help_rickroll",
+        "stream": true
+      }
+    ]
+  },
+  "hunter_help_elevator": {
+    "subtitle": "Hunter help activated",
+    "sounds": [
+      {
+        "name": "prophunt:hunter_help_elevator",
+        "stream": true
+      }
+    ]
+  },
+  "hunter_help_run": {
+    "subtitle": "Hunter help activated",
+    "sounds": [
+      {
+        "name": "prophunt:hunter_help_run",
+        "stream": true
+      }
+    ]
+  },
+  "hunter_help_amongus": {
+    "subtitle": "Hunter help activated",
+    "sounds": [
+      {
+        "name": "prophunt:hunter_help_amongus",
+        "stream": true
+      }
+    ]
+  },
+  "hunter_help_militarytrumpet": {
+    "subtitle": "Hunter help activated",
+    "sounds": [
+      {
+        "name": "prophunt:hunter_help_militarytrumpet",
+        "stream": true
+      }
+    ]
+  },
+  "prop_decoy_fart": {
+    "subtitle": "Prop decoy activated",
+    "sounds": [
+      {
+        "name": "prophunt:prop_decoy_fart",
+        "stream": false
+      }
+    ]
+  },
+  "prop_win": {
+    "subtitle": "Props win!",
+    "sounds": [
+      {
+        "name": "prophunt:prop_win",
+        "stream": true
+      }
+    ]
+  },
+  "hunter_win": {
+    "subtitle": "Hunters win!",
+    "sounds": [
+      {
+        "name": "prophunt:hunter_win",
+        "stream": true
+      }
+    ]
+  }
+}

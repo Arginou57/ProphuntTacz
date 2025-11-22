@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(gradle --version:*)",
+      "Bash(java:*)",
+      "Bash(mkdir:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(chmod:*)",
+      "Bash(./gradlew build:*)",
+      "Bash(./gradlew clean:*)",
+      "Bash(cat:*)",
+      "Bash(unzip:*)",
+      "Bash(./gradlew runClient:*)",
+      "WebFetch(domain:www.myinstants.com)",
+      "Bash(.gradlew build:*)",
+      "Bash(gradlew build:*)",
+      "Bash(gradlew.bat build:*)",
+      "Bash(\"C:\\Users\\Mathis\\.local\\bin\\PropHuntMod\\gradlew\" build)",
+      "Bash(./gradlew.bat build:*)",
+      "Bash(ls:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
